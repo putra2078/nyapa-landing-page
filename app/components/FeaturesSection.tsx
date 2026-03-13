@@ -8,31 +8,10 @@ import featureContactIcon from "../images/contacts.png";
 import featureRealtimeIcon from "../images/lightning.png";
 import featureTeamIcon from "../images/people.png";
 export default function FeaturesSection() {
-    // const features = [
-    //     {
-    //         icon: "📋",
-    //         title: "Broadcast Pesan Satu Klik",
-    //         description: "Kirim pesan ke banyak pelanggan secara sekaligus.",
-    //     },
-    //     {
-    //         icon: "💬",
-    //         title: "Chat Real Time,text-center Multi-Channel",
-    //         description: "Balas pesan dari mana saja, kapan saja.",
-    //     },
-    //     {
-    //         icon: "🤖",
-    //         title: "Chatbot Yuk Tidur Auto",
-    //         description: "Otomatis balas pesan di luar jam kerja.",
-    //     },
-    //     {
-    //         icon: "📊",
-    //         title: "My Info & Label Kontack",
-    //         description: "Kelola data dan label kontak pelanggan.",
-    //     },
-    // ];
+
 
     return (
-        <section id="fitur" className="relative bg-[#341145] w-full py-16 md:py-24">
+        <section id="layanan" className="relative bg-[#341145] w-full py-16 md:py-24">
             {/* Texture Background */}
             <div className="absolute inset-0 mix-blend-overlay opacity-50">
                 <Image
@@ -51,7 +30,7 @@ export default function FeaturesSection() {
                     />
                 </div>
             </div>
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col justify-center items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <div className="flex justify-center w-full h-max mb-12 md:mb-16">
                     <Image
@@ -62,16 +41,16 @@ export default function FeaturesSection() {
                 </div>
 
                 {/* Features Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-2">
+                <div className="grid w-[85%] grid-cols-1 sm:grid-cols-2 gap-4 md:gap-2">
                     <div className="relative w-max h-max">
                         <div className="flex">
                             <Image
                                 src={featureBroadcastIcon}
                                 alt="feature icon top right"
-                                className="w-max h-max object-contain"
+                                className="w-[max] h-[max] object-contain"
                             />
-                            <div className="relative w-max h-max top-10 left-10 text-white">
-                                <p className="font-bold text-xl">Broadcast Pesan Sekali Klik</p>
+                            <div className="relative w-max h-max top-0 left-10 text-white">
+                                <p className="font-bold text-4xl mb-4">Broadcast Pesan Sekali Klik</p>
                                 <p>Kirim promo & informasi ke banyak <br /> pelanggan sekaligus.</p>
                             </div>
                         </div>
@@ -83,8 +62,8 @@ export default function FeaturesSection() {
                                 alt="feature icon top right"
                                 className="w-max h-max object-contain"
                             />
-                            <div className="relative w-max h-max top-10 left-10 text-white">
-                                <p className="font-bold text-xl">Kelola & Label Kontak</p>
+                            <div className="relative w-max h-max top-0 left-10 text-white">
+                                <p className="font-bold text-4xl mb-4">Kelola & Label Kontak</p>
                                 <p>Buat sapaan lebih personal dengan data <br /> pelanggan yang lengkap.</p>
                             </div>
                         </div>
@@ -96,8 +75,8 @@ export default function FeaturesSection() {
                                 alt="feature icon top right"
                                 className="w-max h-max object-contain"
                             />
-                            <div className="relative w-max h-max top-10 left-10 text-white">
-                                <p className="font-bold text-xl">Chat Real Time, Multi Channel</p>
+                            <div className="relative w-max h-max top-0 left-10 text-white">
+                                <p className="font-bold text-4xl mb-4">Chat Real Time, Multi Channel</p>
                                 <p>Satu dashboard untuk balas pesan dari <br /> berbagai platform.</p>
                             </div>
                         </div>
@@ -109,8 +88,8 @@ export default function FeaturesSection() {
                                 alt="feature icon top left"
                                 className="w-max h-max object-contain"
                             />
-                            <div className="relative w-max h-max top-10 left-10 text-white">
-                                <p className="font-bold text-xl">Tambah Tim Tanpa Batas</p>
+                            <div className="relative w-max h-max top-4 left-10 text-white">
+                                <p className="font-bold text-4xl mb-4">Tambah Tim Tanpa Batas</p>
                                 <p>Kolaborasi jadi lebih mudah, semua bisa ikut <br /> menyapa.</p>
                             </div>
                         </div>
