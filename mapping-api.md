@@ -1,6 +1,6 @@
 MODULE AUTH
 
-Feature
+Feature :
 User Registration
 
 UI Page
@@ -58,7 +58,7 @@ Token disimpan di local storage atau secure cookie.
 
 =======================================================================
 
-Feature
+Feature :
 User Login
 
 UI Page
@@ -110,7 +110,7 @@ authStore.setToken()
 
 =======================================================================
 
-Feature
+Feature :
 User Logout
 
 UI Page
@@ -147,7 +147,7 @@ authStore.clear()
 
 =======================================================================
 
-Feature
+Feature :
 Forgot Password
 
 UI Page
@@ -182,7 +182,7 @@ Response Schema
 
 =======================================================================
 
-Feature
+Feature :
 Reset Password
 
 UI Page
@@ -219,7 +219,7 @@ Response Schema
 
 =======================================================================
 
-Feature
+Feature :
 Change Password
 
 UI Page
@@ -258,7 +258,7 @@ Response Schema
 
 MODULE USER
 
-Feature
+Feature :
 Get Profile
 
 UI Page
