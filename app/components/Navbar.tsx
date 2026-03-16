@@ -1,5 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
+import nyapaIconNav from "../images/nyapa-icon-nav.png";
+import nyapaLogo from "../images/nyapa.png";
+import globe from "../images/globe.png";
 
 export default function Navbar() {
     return (
@@ -9,13 +12,13 @@ export default function Navbar() {
                     <div className="flex items-center gap-2">
                         <Image
                             width={50} height={30} 
-                            src="/Group1.png"
+                            src={nyapaIconNav}
                             alt="Logo Nyapa"
                         />
                         <Link href="/">
                             <Image
                                 width={80} height={30}
-                                src="/nyapa.png"
+                                src={nyapaLogo}
                                 alt="Nyapa"
                             />
                         </Link>
@@ -53,7 +56,7 @@ export default function Navbar() {
                         <button className="p-2 text-gray-700">
                             <Image
                             width={20} height={20}
-                            src="/globe.png"
+                            src={globe}
                             alt="globe"
                             />
                         </button>

@@ -1,156 +1,304 @@
-Module Auth
+MODULE AUTH
 
-POST /api/v1/auth/register
-POST /api/v1/auth/login
-POST /api/v1/auth/logout
-POST /api/v1/auth/forgot-password
-POST /api/v1/auth/reset-password
-POST /api/v1/auth/change-password
+Feature
+User Registration
 
-Module User
+UI Page
+Register Page
 
-GET /api/v1/users/profile
+Frontend Route
+/register
 
-// ================================================================= //
+Service Function
+authService.register()
 
-Free Trial
+HTTP Method
+POST
 
-POST https://api.nyapa.id/api/v1/auth/register
+Endpoint
+/api/v1/auth/register
 
-Body:
+Authentication
+No
+
+Request Schema
 {
-    "name": "string",
-    "email": "string",
-    "password": "string",
-    "phone": "string"
+"name": "string",
+"email": "string",
+"password": "string",
+"phone": "string"
 }
 
-Response:
+Response Schema
 {
-    "status": "success",
-    "message": "User created successfully",
-    "data": {
-        "user": {
-            "id": 1,
-            "name": "string",
-            "email": "string",
-            "phone": "string",
-            "role": "string",
-            "created_at": "2026-03-13T08:31:38.000000Z",
-            "updated_at": "2026-03-13T08:31:38.000000Z"
-        },
-        "token": "string"
-    }
+"status": "success",
+"message": "User created successfully",
+"data": {
+"user": {
+"id": "integer",
+"name": "string",
+"email": "string",
+"phone": "string",
+"role": "string",
+"created_at": "datetime",
+"updated_at": "datetime"
+},
+"token": "string"
+}
 }
 
+State Management
 
-Login
+authStore.setUser()
+authStore.setToken()
 
-POST https://api.nyapa.id/api/v1/auth/login
+Notes
 
-Body:
+Token disimpan di local storage atau secure cookie.
+
+=======================================================================
+
+Feature
+User Login
+
+UI Page
+Login Page
+
+Frontend Route
+/login
+
+Service Function
+authService.login()
+
+HTTP Method
+POST
+
+Endpoint
+/api/v1/auth/login
+
+Authentication
+No
+
+Request Schema
 {
-    "email": "string",
-    "password": "string"
+"email": "string",
+"password": "string"
 }
 
-Response:
+Response Schema
 {
-    "status": "success",
-    "message": "User logged in successfully",
-    "data": {
-        "user": {
-            "id": 1,
-            "name": "string",
-            "email": "string",
-            "phone": "string",
-            "role": "string",
-            "created_at": "2026-03-13T08:31:38.000000Z",
-            "updated_at": "2026-03-13T08:31:38.000000Z"
-        },
-        "token": "string"
-    }
+"status": "success",
+"message": "User logged in successfully",
+"data": {
+"user": {
+"id": "integer",
+"name": "string",
+"email": "string",
+"phone": "string",
+"role": "string",
+"created_at": "datetime",
+"updated_at": "datetime"
+},
+"token": "string"
+}
 }
 
+State Management
 
+authStore.setUser()
+authStore.setToken()
+
+=======================================================================
+
+Feature
+User Logout
+
+UI Page
+Profile Dropdown
+
+Frontend Route
+/profile
+
+Service Function
+authService.logout()
+
+HTTP Method
+POST
+
+Endpoint
+/api/v1/auth/logout
+
+Authentication
+Bearer Token
+
+Request Header
+Authorization: Bearer {token}
+
+Response Schema
+{
+"status": "success",
+"message": "User logged out successfully",
+"data": {}
+}
+
+State Management
+
+authStore.clear()
+
+=======================================================================
+
+Feature
+Forgot Password
+
+UI Page
+Forgot Password Page
+
+Frontend Route
+/forgot-password
+
+Service Function
+authService.forgotPassword()
+
+HTTP Method
+POST
+
+Endpoint
+/api/v1/auth/forgot-password
+
+Authentication
+No
+
+Request Schema
+{
+"email": "string"
+}
+
+Response Schema
+{
+"status": "success",
+"message": "Password reset link sent successfully",
+"data": {}
+}
+
+=======================================================================
+
+Feature
+Reset Password
+
+UI Page
+Reset Password Page
+
+Frontend Route
+/reset-password
+
+Service Function
+authService.resetPassword()
+
+HTTP Method
+POST
+
+Endpoint
+/api/v1/auth/reset-password
+
+Authentication
+No
+
+Request Schema
+{
+"token": "string",
+"password": "string",
+"password_confirmation": "string"
+}
+
+Response Schema
+{
+"status": "success",
+"message": "Password reset successfully",
+"data": {}
+}
+
+=======================================================================
+
+Feature
+Change Password
+
+UI Page
+Account Settings
+
+Frontend Route
+/settings/security
+
+Service Function
+authService.changePassword()
+
+HTTP Method
+POST
+
+Endpoint
+/api/v1/auth/change-password
+
+Authentication
+Bearer Token
+
+Request Schema
+{
+"current_password": "string",
+"password": "string",
+"password_confirmation": "string"
+}
+
+Response Schema
+{
+"status": "success",
+"message": "Password changed successfully",
+"data": {}
+}
+
+=======================================================================
+
+MODULE USER
+
+Feature
 Get Profile
 
-GET https://api.nyapa.id/api/v1/users/profile
+UI Page
+Profile Page
 
-Response:
+Frontend Route
+/profile
+
+Service Function
+userService.getProfile()
+
+HTTP Method
+GET
+
+Endpoint
+/api/v1/users/profile
+
+Authentication
+Bearer Token
+
+Request Header
+Authorization: Bearer {token}
+
+Response Schema
 {
-    "status": "success",
-    "message": "User profile retrieved successfully",
-    "data": {
-        "user": {
-            "id": 1,
-            "name": "string",
-            "email": "string",
-            "phone": "string",
-            "role": "string",
-            "created_at": "2026-03-13T08:31:38.000000Z",
-            "updated_at": "2026-03-13T08:31:38.000000Z"
-        }
-    }
+"status": "success",
+"message": "User profile retrieved successfully",
+"data": {
+"user": {
+"id": "integer",
+"name": "string",
+"email": "string",
+"phone": "string",
+"role": "string",
+"created_at": "datetime",
+"updated_at": "datetime"
+}
+}
 }
 
+State Management
 
-
-POST https://api.nyapa.id/api/v1/auth/logout
-
-Response:
-{
-    "status": "success",
-    "message": "User logged out successfully",
-    "data": {}
-}
-
-
-POST https://api.nyapa.id/api/v1/auth/forgot-password
-
-Body:
-{
-    "email": "string"
-}
-
-Response:
-{
-    "status": "success",
-    "message": "Password reset link sent successfully",
-    "data": {}
-}
-
-
-POST https://api.nyapa.id/api/v1/auth/reset-password
-
-Body:
-{
-    "token": "string",
-    "password": "string",
-    "password_confirmation": "string"
-}
-
-Response:
-{
-    "status": "success",
-    "message": "Password reset successfully",
-    "data": {}
-}
-
-
-POST https://api.nyapa.id/api/v1/auth/change-password
-
-Body:
-{
-    "current_password": "string",
-    "password": "string",
-    "password_confirmation": "string"
-}
-
-Response:
-{
-    "status": "success",
-    "message": "Password changed successfully",
-    "data": {}
-}
-
+userStore.setProfile()
