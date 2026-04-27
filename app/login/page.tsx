@@ -1,20 +1,40 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import bannerLogin from "../images/banner-login.jpg";
 import nyapaLogo from "../images/footer-nyapa-icon.png";
+import authService from "../service/auth";
 
 export default function LoginPage() {
+    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: implement login logic
-        console.log("Login:", { email, password });
+        setIsLoading(true);
+        setError("");
+
+        try {
+            const response = await authService.login({ email, password });
+            authService.saveAuth(response.data);
+            router.push("/cms");
+        } catch (err: unknown) {
+            if (err && typeof err === "object" && "response" in err) {
+                const axiosErr = err as { response?: { data?: { message?: string } } };
+                setError(axiosErr.response?.data?.message || "Login gagal. Silakan coba lagi.");
+            } else {
+                setError("Terjadi kesalahan. Silakan coba lagi.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -85,12 +105,19 @@ export default function LoginPage() {
                     <p className="text-gray-600 mb-8">
                         Tidak punya akun?{" "}
                         <Link
-                            href="#"
+                            href="/register"
                             className="text-[#FF5100] font-semibold hover:underline"
                         >
                             Buat sekarang!
                         </Link>
                     </p>
+
+                    {/* Error Message */}
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                            {error}
+                        </div>
+                    )}
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -163,9 +190,10 @@ export default function LoginPage() {
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            className="w-full py-3 bg-[#341145] text-white font-semibold rounded-lg hover:bg-[#4a1d5e] active:bg-[#2a0d38] transition-colors cursor-pointer"
+                            disabled={isLoading}
+                            className="w-full py-3 bg-[#341145] text-white font-semibold rounded-lg hover:bg-[#4a1d5e] active:bg-[#2a0d38] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                         >
-                            Masuk
+                            {isLoading ? "Memproses..." : "Masuk"}
                         </button>
                     </form>
                 </div>

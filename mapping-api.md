@@ -302,3 +302,14 @@ Response Schema
 State Management
 
 userStore.setProfile()
+
+==========================================================
+
+List API needed for landing page
+
+- API keunggulan aplikasi => section Alasan
+- API Klien => section Client
+- API Testimoni => section Testimonial
+- API Package/Plan List => section plan
+- API Artikel => section artikel
+- Redirect akun sosmed IG, FB, WA => Footer section

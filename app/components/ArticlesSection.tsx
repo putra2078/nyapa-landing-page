@@ -12,18 +12,21 @@ export default function ArticlesSection() {
             excerpt:
                 "Kerangka kerja yang menguraikan strategi, struktur, dan proses untuk membangun hubungan jangka panjang dengan pelanggan.",
             image: crmArticle,
+            page: "/artikel/crm-architecture"
         },
         {
             title: "Bangun Customer Persona, Agar Program Kamu Lebih Pas!",
             excerpt:
                 "Mulailah dengan melakukan riset mendalam untuk mengumpulkan data demografi, identifikasi masalah",
             image: technology,
+            page: "/artikel/customer-persona"
         },
         {
             title: 'Pahami Apa Itu "Relationship" agar Tidak Salah Langkah!',
             excerpt:
                 "Konsep hubungan (relationship) yang berpusat pada pelanggan dengan komunikasi dua arah..",
             image: technology,
+            page: "/artikel/customer-relationship"
         },
     ];
 
@@ -57,7 +60,7 @@ export default function ArticlesSection() {
                     {articles.map((article, index) => (
                         <Link
                             key={index}
-                            href="#"
+                            href={article.page}
                             className="group bg-white/15 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all hover:bg-white/20"
                         >
                             {/* Image */}
