@@ -19,7 +19,7 @@ export default function CTASection() {
                             />
                         </div>
                         <Link
-                            href="#"
+                            href="https://app.nyapa.id/auth/register"
                             className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-12 py-4 text-base font-semibold text-white hover:bg-orange-600 transition-colors"
                         >
                             Coba Gratis Sekarang!

@@ -60,9 +60,11 @@ export default function HeroSection() {
                             />
                         </div>
                         <div className="absolute">
-                            <button className="bg-purple-900 w-max px-8 h-12 rounded-full font-bold">
-                                Coba Gratis 1 Bulan!
-                            </button>
+                            <Link href="https://app.nyapa.id/auth/register">
+                                <button className="bg-purple-900 w-max px-8 h-12 rounded-full font-bold">
+                                    Coba Gratis 1 Bulan!
+                                </button>
+                            </Link>
                         </div>
                     </div>
 
@@ -83,7 +85,7 @@ export default function HeroSection() {
                             Satu aplikasi untuk chat, broadcast,<br className="hidden md:block" />
                             dan <span className="font-bold">kelola pelanggan lebih rapi.</span>
                         </p>
-                        <Link href="#" className="bg-[#FF5100] hover:bg-orange-600 text-white px-8 py-3 rounded-full font-bold transition-colors shadow-lg">
+                        <Link href="https://app.nyapa.id/auth/register" className="bg-[#FF5100] hover:bg-orange-600 text-white px-8 py-3 rounded-full font-bold transition-colors shadow-lg">
                             Coba Gratis Sekarang!
                         </Link>
                     </div>
