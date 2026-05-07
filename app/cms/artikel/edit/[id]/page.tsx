@@ -8,6 +8,21 @@ import apiService, { ArticleCreatePayload } from "../../../../service/api";
 import authService from "../../../../service/auth";
 import { useToast } from "../../../../components/Toast";
 
+/**
+ * Helper to convert Date to ISO string with local timezone offset
+ * e.g., 2026-05-04T12:00:00+07:00
+ */
+const toLocalISOString = (date: Date) => {
+    const offset = -date.getTimezoneOffset();
+    const offsetHours = Math.floor(Math.abs(offset) / 60).toString().padStart(2, "0");
+    const offsetMinutes = (Math.abs(offset) % 60).toString().padStart(2, "0");
+    const offsetSign = offset >= 0 ? "+" : "-";
+
+    const pad = (n: number) => n.toString().padStart(2, "0");
+
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}${offsetSign}${offsetHours}:${offsetMinutes}`;
+};
+
 interface ArticleForm {
     title: string;
     slug: string;
@@ -41,9 +56,15 @@ export default function ArticleEditPage() {
     });
 
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [imageInputMode, setImageInputMode] = useState<"file" | "url">("file");
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imageError, setImageError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp"];
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
     // Fetch existing article data
     useEffect(() => {
@@ -60,10 +81,24 @@ export default function ArticleEditPage() {
                     meta_description: data.meta_description || "",
                     meta_keywords: data.meta_keywords || "",
                     status: data.status || "draft",
-                    published_at: data.published_at ? new Date(data.published_at).toISOString().slice(0, 16) : "",
+                    published_at: data.published_at
+                        ? (() => {
+                            const d = new Date(data.published_at);
+                            const year = d.getFullYear();
+                            const month = String(d.getMonth() + 1).padStart(2, '0');
+                            const day = String(d.getDate()).padStart(2, '0');
+                            const hours = String(d.getHours()).padStart(2, '0');
+                            const minutes = String(d.getMinutes()).padStart(2, '0');
+                            return `${year}-${month}-${day}T${hours}:${minutes}`;
+                        })()
+                        : "",
                 });
                 if (data.featured_image) {
                     setImagePreview(data.featured_image);
+                    // Auto-detect URL mode if image looks like a URL
+                    if (data.featured_image.startsWith("http")) {
+                        setImageInputMode("url");
+                    }
                 }
             } catch (err) {
                 console.error("Failed to fetch article:", err);
@@ -115,9 +150,33 @@ export default function ArticleEditPage() {
     const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setImageError(null);
+
+            // Validate extension
+            const ext = "." + file.name.split(".").pop()?.toLowerCase();
+            if (!ALLOWED_IMAGE_EXTENSIONS.includes(ext)) {
+                setImageError(`Format file tidak didukung. Gunakan: ${ALLOWED_IMAGE_EXTENSIONS.join(", ")}`);
+                e.target.value = "";
+                return;
+            }
+
+            // Validate size
+            if (file.size > MAX_FILE_SIZE) {
+                setImageError("Ukuran file terlalu besar. Maksimal 5MB.");
+                e.target.value = "";
+                return;
+            }
+
+            setImageFile(file);
             setImagePreview(URL.createObjectURL(file));
             setForm((prev) => ({ ...prev, featured_image: file.name }));
         }
+    }, []);
+
+    const handleImageUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const url = e.target.value;
+        setForm((prev) => ({ ...prev, featured_image: url }));
+        setImagePreview(url || null);
     }, []);
 
     const handleSubmit = useCallback(async () => {
@@ -135,9 +194,10 @@ export default function ArticleEditPage() {
                 meta_title: form.meta_title || undefined,
                 meta_description: form.meta_description || undefined,
                 meta_keywords: form.meta_keywords || undefined,
+                published_at: form.published_at ? toLocalISOString(new Date(form.published_at)) : undefined,
             };
 
-            await apiService.updateArticle(articleId, payload);
+            await apiService.updateArticle(articleId, payload, imageFile || undefined);
 
             // Success
             showToast("Artikel berhasil diperbarui!", "success");
@@ -152,7 +212,7 @@ export default function ArticleEditPage() {
         } finally {
             setIsLoading(false);
         }
-    }, [form, router, articleId]);
+    }, [form, router, articleId, imageFile]);
 
     const inputClass =
         "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none text-gray-900 bg-white transition-colors";
@@ -238,35 +298,107 @@ export default function ArticleEditPage() {
 
                 {/* Featured Image */}
                 <FormGroup label="Featured Image">
-                    <div className="flex gap-4 items-start">
-                        <label className="w-[120px] h-[120px] bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors flex-shrink-0">
-                            <svg className="w-7 h-7 mb-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <span className="text-[10px] text-center px-2">Upload Image</span>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                                onChange={handleImageChange}
-                            />
-                        </label>
-                        {imagePreview && (
-                            <div className="w-[120px] h-[120px] rounded-lg overflow-hidden relative flex-shrink-0 border border-gray-200">
-                                <img src={imagePreview} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setImagePreview(null);
-                                        setForm((prev) => ({ ...prev, featured_image: "" }));
-                                    }}
-                                    className="absolute top-1 right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors"
-                                >
-                                    ×
-                                </button>
-                            </div>
-                        )}
+                    {/* Toggle between file upload and URL input */}
+                    <div className="flex gap-2 mb-3">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setImageInputMode("file");
+                                setImagePreview(null);
+                                setImageFile(null);
+                                setImageError(null);
+                                setForm((prev) => ({ ...prev, featured_image: "" }));
+                            }}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${imageInputMode === "file"
+                                ? "bg-blue-600 text-white border-blue-600"
+                                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                        >
+                            Upload File
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setImageInputMode("url");
+                                setImagePreview(null);
+                                setImageFile(null);
+                                setImageError(null);
+                                setForm((prev) => ({ ...prev, featured_image: "" }));
+                            }}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${imageInputMode === "url"
+                                ? "bg-blue-600 text-white border-blue-600"
+                                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                        >
+                            URL Gambar
+                        </button>
                     </div>
+
+                    {imageInputMode === "file" ? (
+                        <div className="flex gap-4 items-start">
+                            <label className="w-[120px] h-[120px] bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors flex-shrink-0">
+                                <svg className="w-7 h-7 mb-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span className="text-[10px] text-center px-2">Upload Image</span>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleImageChange}
+                                />
+                            </label>
+                            {imageError && (
+                                <p className="text-xs text-red-500 mt-1 flex-shrink-0 self-center">{imageError}</p>
+                            )}
+                            {imagePreview && (
+                                <div className="w-[120px] h-[120px] rounded-lg overflow-hidden relative flex-shrink-0 border border-gray-200">
+                                    <img src={imagePreview} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setImagePreview(null);
+                                            setImageFile(null);
+                                            setForm((prev) => ({ ...prev, featured_image: "" }));
+                                        }}
+                                        className="absolute top-1 right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            <input
+                                type="url"
+                                className={inputClass}
+                                placeholder="https://example.com/image.jpg"
+                                value={form.featured_image}
+                                onChange={handleImageUrlChange}
+                            />
+                            {imagePreview && (
+                                <div className="w-full max-w-[240px] aspect-video rounded-lg overflow-hidden relative border border-gray-200">
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        className="absolute inset-0 w-full h-full object-cover"
+                                        onError={() => setImagePreview(null)}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setImagePreview(null);
+                                            setForm((prev) => ({ ...prev, featured_image: "" }));
+                                        }}
+                                        className="absolute top-1 right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </FormGroup>
 
                 {/* ── SEO Meta Section ── */}

@@ -122,7 +122,11 @@ export default function ArticleCMSPage() {
                                     key={article.id}
                                     className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
                                 >
-                                    <td className="p-4 font-medium text-gray-800">{article.title}</td>
+                                    <td className="p-4 font-medium text-gray-800">
+                                        <Link href={`/articles/${article.id}`} className="hover:text-blue-600 transition-colors">
+                                            {article.title}
+                                        </Link>
+                                    </td>
                                     <td className="p-4 text-gray-500">
                                         {new Date(article.created_at).toLocaleDateString("id-ID", {
                                             day: "numeric",
@@ -144,6 +148,11 @@ export default function ArticleCMSPage() {
                                     </td>
                                     <td className="p-4 text-center">
                                         <div className="flex items-center justify-center gap-2">
+                                            <Link href={`/articles/${article.id}`}>
+                                                <button className="text-green-600 hover:text-green-800 font-medium transition-colors">
+                                                    Lihat
+                                                </button>
+                                            </Link>
                                             <Link href={`/cms/artikel/edit/${article.id}`}>
                                                 <button className="text-blue-600 hover:text-blue-800 font-medium transition-colors">
                                                     Edit

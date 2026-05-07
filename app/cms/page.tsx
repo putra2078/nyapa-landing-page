@@ -128,7 +128,11 @@ export default function CMSDashboardPage() {
                         ) : (
                             recentItems.map((a) => (
                                 <tr key={a.id} className="border-t border-gray-100 hover:bg-gray-50/50 transition-colors">
-                                    <td className="px-5 py-3.5 font-medium text-gray-800">{a.title}</td>
+                                    <td className="px-5 py-3.5 font-medium text-gray-800">
+                                        <Link href={`/articles/${a.id}`} className="hover:text-blue-600 transition-colors">
+                                            {a.title}
+                                        </Link>
+                                    </td>
                                     <td className="px-5 py-3.5">
                                         <span
                                             className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium ${a.status === "published"
