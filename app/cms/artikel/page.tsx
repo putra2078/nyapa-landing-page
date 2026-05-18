@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import apiService, { Article } from "../../service/api";
+import apiService, { Article, Category } from "../../service/api";
 import { useToast } from "../../components/Toast";
 import Modal from "../../components/Modal";
 
@@ -13,23 +13,28 @@ export default function ArticleCMSPage() {
     const [isDeleting, setIsDeleting] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
+    const [categories, setCategories] = useState<Category[]>([]);
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
 
     useEffect(() => {
-        async function fetchArticles() {
+        async function fetchData() {
             try {
-                const data = await apiService.getArticles();
-                setArticles(data);
+                const [articlesData, categoriesData] = await Promise.all([
+                    apiService.getArticles(),
+                    apiService.getCategories()
+                ]);
+                setArticles(articlesData);
+                setCategories(categoriesData);
             } catch (error) {
-                console.error("Failed to fetch articles:", error);
+                console.error("Failed to fetch data:", error);
             } finally {
                 setIsLoading(false);
             }
         }
-        fetchArticles();
+        fetchData();
     }, []);
 
     const handleDeleteClick = (id: string) => {
@@ -63,7 +68,7 @@ export default function ArticleCMSPage() {
     }, [articles, searchQuery, statusFilter]);
 
     return (
-        <div className="max-w-[1200px] w-full text-sm">
+        <div className="max-w-300 w-full text-sm">
             {/* Page Actions */}
             <div className="flex justify-between items-center mb-6">
                 <div>
@@ -104,6 +109,7 @@ export default function ArticleCMSPage() {
                     <thead>
                         <tr className="bg-gray-50 border-b border-gray-200 uppercase text-xs font-semibold text-gray-500 tracking-wider">
                             <th className="p-4">Judul Artikel</th>
+                            <th className="p-4">Kategori</th>
                             <th className="p-4">Tanggal</th>
                             <th className="p-4">Status</th>
                             <th className="p-4 text-center">Aksi</th>
@@ -112,7 +118,7 @@ export default function ArticleCMSPage() {
                     <tbody>
                         {isLoading ? (
                             <tr>
-                                <td colSpan={4} className="p-8 text-center text-gray-500">
+                                <td colSpan={5} className="p-8 text-center text-gray-500">
                                     Memuat data artikel...
                                 </td>
                             </tr>
@@ -122,7 +128,14 @@ export default function ArticleCMSPage() {
                                     key={article.id}
                                     className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
                                 >
-                                    <td className="p-4 font-medium text-gray-800">{article.title}</td>
+                                    <td className="p-4 font-medium text-gray-800">
+                                        <Link href={`/articles/${article.id}`} className="hover:text-blue-600 transition-colors">
+                                            {article.title}
+                                        </Link>
+                                    </td>
+                                    <td className="p-4 text-gray-500">
+                                        {categories.find(c => c.id === article.category_id)?.name || "—"}
+                                    </td>
                                     <td className="p-4 text-gray-500">
                                         {new Date(article.created_at).toLocaleDateString("id-ID", {
                                             day: "numeric",
@@ -144,6 +157,11 @@ export default function ArticleCMSPage() {
                                     </td>
                                     <td className="p-4 text-center">
                                         <div className="flex items-center justify-center gap-2">
+                                            <Link href={`/articles/${article.id}`}>
+                                                <button className="text-green-600 hover:text-green-800 font-medium transition-colors">
+                                                    Lihat
+                                                </button>
+                                            </Link>
                                             <Link href={`/cms/artikel/edit/${article.id}`}>
                                                 <button className="text-blue-600 hover:text-blue-800 font-medium transition-colors">
                                                     Edit
@@ -161,7 +179,7 @@ export default function ArticleCMSPage() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={4} className="p-8 text-center text-gray-500">
+                                <td colSpan={5} className="p-8 text-center text-gray-500">
                                     {searchQuery || statusFilter ? "Artikel tidak ditemukan." : "Belum ada artikel."}
                                 </td>
                             </tr>

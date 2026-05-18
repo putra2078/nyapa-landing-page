@@ -32,14 +32,14 @@ export default function PricingSection() {
 
     return (
         <section id="harga" className="bg-[#341145] py-16 md:py-24">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl">
                 {/* Section Header */}
-                <div className="text-center mb-12 md:mb-16">
+                <div className="text-center mb-10 md:mb-16 px-4">
                     <div className="flex justify-center">
                         <Image
                             src={pricingHeader}
                             alt="Pilih paket yang pas untuk tim kamu"
-                            className="w-max h-max object-contain"
+                            className="w-full max-w-xs sm:max-w-sm md:w-max md:h-max object-contain"
                         />
                     </div>
                 </div>
@@ -58,9 +58,11 @@ export default function PricingSection() {
 
                 {/* Pricing Cards */}
                 {!loading && !error && (
-                    <div className="flex flex-wrap justify-center gap-6 md:gap-5 max-w-6xl mx-auto">
+                    <div className={`flex overflow-x-auto pb-10 md:pb-0 md:flex-wrap md:justify-center gap-6 md:gap-5 max-w-6xl mx-auto px-6 md:px-0 snap-x snap-mandatory scrollbar-hide ${plans.length === 1 ? 'justify-center' : 'justify-start md:justify-center'}`}>
                         {plans.map((plan) => (
-                            <PricingCard key={plan.id} plan={plan} />
+                            <div key={plan.id} className="flex-shrink-0 snap-center">
+                                <PricingCard plan={plan} />
+                            </div>
                         ))}
                     </div>
                 )}
