@@ -297,6 +297,14 @@ export default function ArticlesListPage() {
                         </button>
                       ))}
                     </div>
+                  )}
+                  {article.category_id && (
+                    <span className="text-[10px] text-gray-500 font-semibold mb-1 uppercase tracking-wider">
+                      {
+                        categories.find((cat) => cat.id === article.category_id)
+                          ?.name
+                      }
+                    </span>
                   )}{" "}
                   <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#FF5100] transition-colors line-clamp-2">
                     {article.title}
