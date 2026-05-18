@@ -67,6 +67,12 @@ export interface ArticleCreatePayload {
   published_at?: string;
 }
 
+export interface ArticleListResponse {
+  message: string;
+  data: Article[];
+  pagination: Pagination;
+}
+
 const apiService = {
   /**
    * Get all articles (authenticated - for CMS)
@@ -297,7 +303,7 @@ const apiService = {
     field: "slug" | "name" = "slug",
     page: number = 1,
     limit: number = 10,
-  ): Promise<any> {
+  ): Promise<ArticleListResponse> {
     const response = await axiosInstance.get(
       "http://localhost:9804/api/article/tags",
       {

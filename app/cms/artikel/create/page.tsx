@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import RichTextEditor from "../../../components/RichTextEditor";
 import TagInput from "../../../components/TagInput";
@@ -197,15 +198,24 @@ export default function ArticleCreatePage() {
 
       await apiService.createArticle(payload, imageFile || undefined);
 
-      // Success
       showToast("Artikel berhasil dibuat!", "success");
       setTimeout(() => {
         router.push("/cms/artikel");
       }, 1000);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error creating article:", err);
+      interface ApiError {
+        response?: {
+          data?: {
+            message?: string;
+          };
+        };
+        message?: string;
+      }
+      const error = err as ApiError;
       const msg =
-        err.response?.data?.message ||
+        error.response?.data?.message ||
+        error.message ||
         "Gagal membuat artikel. Silakan coba lagi.";
       setErrorMessage(msg);
       showToast(msg, "error");
@@ -356,9 +366,10 @@ export default function ArticleCreatePage() {
               )}
               {imagePreview && (
                 <div className="w-[120px] h-[120px] rounded-lg overflow-hidden relative flex-shrink-0 border border-gray-200">
-                  <img
+                  <Image
                     src={imagePreview}
                     alt="Preview"
+                    fill
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   <button
@@ -386,9 +397,10 @@ export default function ArticleCreatePage() {
               />
               {imagePreview && (
                 <div className="w-full max-w-[240px] aspect-video rounded-lg overflow-hidden relative border border-gray-200">
-                  <img
+                  <Image
                     src={imagePreview}
                     alt="Preview"
+                    fill
                     className="absolute inset-0 w-full h-full object-cover"
                     onError={() => setImagePreview(null)}
                   />

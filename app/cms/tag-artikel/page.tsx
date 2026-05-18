@@ -31,7 +31,7 @@ export default function TagManagementPage() {
         });
         setTags(response.data || []);
         setPagination(response.pagination);
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error fetching tags:", error);
         showToast("Gagal memuat daftar tag", "error");
       } finally {
@@ -89,10 +89,19 @@ export default function TagManagementPage() {
       }
       setIsModalOpen(false);
       fetchTags();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error saving tag:", error);
+      interface ApiError {
+        response?: {
+          data?: {
+            message?: string | string[];
+          };
+        };
+        message?: string;
+      }
+      const err = error as ApiError;
       const msg =
-        error.response?.data?.message || error.message || "Gagal menyimpan tag";
+        err.response?.data?.message || err.message || "Gagal menyimpan tag";
       showToast(Array.isArray(msg) ? msg.join(", ") : String(msg), "error");
     } finally {
       setIsSubmitting(false);

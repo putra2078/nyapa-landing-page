@@ -42,16 +42,7 @@ export default function TagInput({
       }
       setIsLoading(true);
       try {
-        const data = await apiService.searchTags(query);
-        // Ensure data is an array
-        const results = Array.isArray(data)
-          ? data
-          : data &&
-              typeof data === "object" &&
-              "data" in data &&
-              Array.isArray(data.data)
-            ? data.data
-            : [];
+        const results = await apiService.searchTags(query);
 
         // Filter out already selected tags
         setSuggestions(

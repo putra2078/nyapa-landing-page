@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import RichTextEditor from "../../../../components/RichTextEditor";
@@ -259,10 +260,20 @@ export default function ArticleEditPage() {
       setTimeout(() => {
         router.push("/cms/artikel");
       }, 1000);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error updating article:", err);
+      interface ApiError {
+        response?: {
+          data?: {
+            message?: string;
+          };
+        };
+        message?: string;
+      }
+      const error = err as ApiError;
       const msg =
-        err.response?.data?.message ||
+        error.response?.data?.message ||
+        error.message ||
         "Gagal memperbarui artikel. Silakan coba lagi.";
       setErrorMessage(msg);
       showToast(msg, "error");
@@ -446,6 +457,7 @@ export default function ArticleEditPage() {
                   <Image
                     src={imagePreview}
                     alt="Preview"
+                    fill
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   <button

@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import apiService, { Article, Category, TagSnapshot } from "../service/api";
 import Navbar from "../components/Navbar";
+import Image from "next/image";
 import Footer from "../components/Footer";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -42,9 +43,9 @@ export default function ArticlesListPage() {
           });
         });
         setAvailableTags(Array.from(tagsMap.values()));
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error fetching data:", err);
-        setError(err.message || "Gagal memuat data artikel.");
+        setError((err as Error).message || "Gagal memuat data artikel.");
       } finally {
         setLoading(false);
       }
@@ -244,9 +245,10 @@ export default function ArticlesListPage() {
                 {/* Image Container */}
                 <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
                   {article.featured_image ? (
-                    <img
+                    <Image
                       src={article.featured_image}
                       alt={article.title}
+                      fill
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
